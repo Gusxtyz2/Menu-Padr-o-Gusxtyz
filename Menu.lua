@@ -475,6 +475,26 @@ do
     local t3 = criaToggleBox(sidebarFrames[1], "FireRate Hack", function(on) _G.FireRateHack = on end) t3.Position = UDim2.new(0, 20, 0, y)
 end
 
+Menu:Toggle("ESP Box", toggles.ESPBox, function(val)
+    toggles.ESPBox = val
+end)
+
+Menu:Slider("FOV", 50, 300, toggles.FOVSize, function(val)
+    toggles.FOVSize = val
+end)
+
+Menu:Toggle("Infinity Jump", toggles.InfinityJump, function(val)
+    toggles.InfinityJump = val
+end)
+
+Menu:Toggle("NoClip", toggles.NoClip, function(val)
+    toggles.NoClip = val
+end)
+
+Menu:Toggle("Fly Hack", toggles.FlyHack, function(val)
+    toggles.FlyHack = val
+end)
+
 ----------------------------------------------------------------------------------------
 
 -- Agora, você pode usar _G.AimbotAnimais, _G.AimbotPlayers, _G.FireRateHack no seu script para saber se cada função está ativa!
