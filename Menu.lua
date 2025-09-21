@@ -26,7 +26,6 @@ local sizeIndex = 3
 -- ÍCONES SIDEBAR DARK/EMO (só 4)
 local sidebarIcons = {
     {img="rbxassetid://6031075938", tip="Main"},     -- Página main 6031094678 (x)
-
     {img="rbxassetid://6031763426", tip="Visual"},   -- visual 
     {img="rbxassetid://6031280882", tip="Config"},   -- engrenagem
     {img="rbxassetid://6031071050", tip="Extra"},    -- extra
@@ -263,3 +262,221 @@ btnResize.MouseButton1Click:Connect(function()
     -- Reposiciona para centralizar na tela
     menu.Position = UDim2.new(0.5, -newSize.X/2, 0.5, -newSize.Y/2)
 end)
+
+----------------------------------------------------------------------------------------
+-- ==================== TOGGLES UNIC (3 tipos bonitos já integrados) ==================
+----------------------------------------------------------------------------------------
+local color_toggle_on = Color3.fromRGB(125,125,252)
+local color_toggle_off = Color3.fromRGB(30,30,30)
+local color_slide = Color3.fromRGB(173,177,255)
+local color_box_on = Color3.fromRGB(125,125,252)
+local color_box_off = Color3.fromRGB(38,38,48)
+local color_name = Color3.fromRGB(188,188,188)
+
+-- 1. Toggle Switch clássico com círculo deslizante
+function criaToggleSwitch(parent, nome, callback)
+    local frame = Instance.new("Frame", parent)
+    frame.Size = UDim2.new(0, 220, 0, 38)
+    frame.BackgroundTransparency = 1
+
+    local label = Instance.new("TextLabel", frame)
+    label.Size = UDim2.new(0, 130, 1, 0)
+    label.Position = UDim2.new(0, 0, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = nome
+    label.Font = Enum.Font.Gotham
+    label.TextColor3 = color_name
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.TextSize = 18
+
+    local toggle = Instance.new("Frame", frame)
+    toggle.Size = UDim2.new(0, 48, 0, 22)
+    toggle.Position = UDim2.new(0, 150, 0.5, -11)
+    toggle.BackgroundColor3 = color_toggle_off
+    toggle.BorderSizePixel = 0
+    toggle.Name = "SwitchBG"
+    Instance.new("UICorner", toggle).CornerRadius = UDim.new(1,0)
+    Instance.new("UIStroke", toggle).Color = color_toggle_on
+
+    local circle = Instance.new("Frame", toggle)
+    circle.Size = UDim2.new(0, 18, 0, 18)
+    circle.Position = UDim2.new(0, 2, 0, 2)
+    circle.BackgroundColor3 = color_toggle_on
+    circle.BorderSizePixel = 0
+    Instance.new("UICorner", circle).CornerRadius = UDim.new(1,0)
+    circle.Name = "SwitchCircle"
+
+    local ativado = false
+    local function update()
+        if ativado then
+            toggle.BackgroundColor3 = color_toggle_on
+            circle.Position = UDim2.new(1, -20, 0, 2)
+            circle.BackgroundColor3 = color_slide
+        else
+            toggle.BackgroundColor3 = color_toggle_off
+            circle.Position = UDim2.new(0, 2, 0, 2)
+            circle.BackgroundColor3 = color_toggle_on
+        end
+    end
+    update()
+
+    toggle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            ativado = not ativado
+            update()
+            if callback then callback(ativado) end
+        end
+    end)
+    -- Mobile suporte
+    circle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch then
+            ativado = not ativado
+            update()
+            if callback then callback(ativado) end
+        end
+    end)
+    return frame
+end
+
+-- 2. Toggle Slide - animação de slide personalizado
+function criaToggleSlide(parent, nome, callback)
+    local frame = Instance.new("Frame", parent)
+    frame.Size = UDim2.new(0, 220, 0, 38)
+    frame.BackgroundTransparency = 1
+
+    local label = Instance.new("TextLabel", frame)
+    label.Size = UDim2.new(0, 130, 1, 0)
+    label.Position = UDim2.new(0, 0, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = nome
+    label.Font = Enum.Font.Gotham
+    label.TextColor3 = color_name
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.TextSize = 18
+
+    local toggle = Instance.new("Frame", frame)
+    toggle.Size = UDim2.new(0, 48, 0, 22)
+    toggle.Position = UDim2.new(0, 150, 0.5, -11)
+    toggle.BackgroundColor3 = color_toggle_off
+    toggle.BorderSizePixel = 0
+    toggle.Name = "SlideBG"
+    Instance.new("UICorner", toggle).CornerRadius = UDim.new(1,0)
+    Instance.new("UIStroke", toggle).Color = color_toggle_on
+
+    local fill = Instance.new("Frame", toggle)
+    fill.Size = UDim2.new(0, 0, 1, 0)
+    fill.BackgroundColor3 = color_slide
+    fill.BorderSizePixel = 0
+    fill.Name = "SlideFill"
+    fill.BackgroundTransparency = 0.4
+    Instance.new("UICorner", fill).CornerRadius = UDim.new(1,0)
+
+    local ativado = false
+    local function update()
+        if ativado then
+            fill:TweenSize(UDim2.new(1,0,1,0), "Out", "Sine", 0.18, true)
+            toggle.BackgroundColor3 = color_toggle_on
+        else
+            fill:TweenSize(UDim2.new(0,0,1,0), "Out", "Sine", 0.18, true)
+            toggle.BackgroundColor3 = color_toggle_off
+        end
+    end
+    update()
+
+    toggle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            ativado = not ativado
+            update()
+            if callback then callback(ativado) end
+        end
+    end)
+    -- Mobile suporte
+    fill.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch then
+            ativado = not ativado
+            update()
+            if callback then callback(ativado) end
+        end
+    end)
+
+    return frame
+end
+
+-- 3. Toggle Box - caixinha customizada (roxo/transparent)
+function criaToggleBox(parent, nome, callback)
+    local frame = Instance.new("Frame", parent)
+    frame.Size = UDim2.new(0, 220, 0, 38)
+    frame.BackgroundTransparency = 1
+
+    local label = Instance.new("TextLabel", frame)
+    label.Size = UDim2.new(0, 130, 1, 0)
+    label.Position = UDim2.new(0, 0, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = nome
+    label.Font = Enum.Font.Gotham
+    label.TextColor3 = color_name
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.TextSize = 18
+
+    local box = Instance.new("Frame", frame)
+    box.Size = UDim2.new(0, 22, 0, 22)
+    box.Position = UDim2.new(0, 150, 0.5, -11)
+    box.BackgroundColor3 = color_box_off
+    box.BorderSizePixel = 0
+    Instance.new("UICorner", box).CornerRadius = UDim.new(0.4,0)
+    Instance.new("UIStroke", box).Color = color_box_on
+
+    local check = Instance.new("Frame", box)
+    check.Size = UDim2.new(1, -8, 1, -8)
+    check.Position = UDim2.new(0, 4, 0, 4)
+    check.BackgroundColor3 = color_box_on
+    check.BackgroundTransparency = 1
+    check.BorderSizePixel = 0
+    Instance.new("UICorner", check).CornerRadius = UDim.new(0.4,0)
+
+    local ativado = false
+    local function update()
+        if ativado then
+            box.BackgroundColor3 = color_box_on
+            check.BackgroundTransparency = 0
+        else
+            box.BackgroundColor3 = color_box_off
+            check.BackgroundTransparency = 1
+        end
+    end
+    update()
+
+    box.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            ativado = not ativado
+            update()
+            if callback then callback(ativado) end
+        end
+    end)
+    -- Mobile suporte
+    check.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.Touch then
+            ativado = not ativado
+            update()
+            if callback then callback(ativado) end
+        end
+    end)
+    return frame
+end
+
+-- ===================== EXEMPLO DE USO NA ABA MAIN =============================
+-- Adicione os toggles na aba Main (sidebarFrames[1])
+do
+    local y = 44 -- posição vertical inicial abaixo do título
+    local t1 = criaToggleSwitch(sidebarFrames[1], "Aimbot Animais", function(on) _G.AimbotAnimais = on end) t1.Position = UDim2.new(0, 20, 0, y)
+    y = y + 42
+    local t2 = criaToggleSlide(sidebarFrames[1], "Aimbot Players", function(on) _G.AimbotPlayers = on end) t2.Position = UDim2.new(0, 20, 0, y)
+    y = y + 42
+    local t3 = criaToggleBox(sidebarFrames[1], "FireRate Hack", function(on) _G.FireRateHack = on end) t3.Position = UDim2.new(0, 20, 0, y)
+end
+
+----------------------------------------------------------------------------------------
+
+-- Agora, você pode usar _G.AimbotAnimais, _G.AimbotPlayers, _G.FireRateHack no seu script para saber se cada função está ativa!
+
+-- FIM
